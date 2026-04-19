@@ -1,6 +1,16 @@
 function VideoOptionCard({ onSelect, option }) {
   console.log('Rendering VideoOptionCard with option:', option)
 
+  const enforceMutedPlayback = (event) => {
+    const video = event.currentTarget
+
+    if (!video.muted || video.volume !== 0) {
+      video.muted = true
+      video.defaultMuted = true
+      video.volume = 0
+    }
+  }
+
   return (
     <article className="glass-panel flex h-full flex-col rounded-[1.75rem] p-4 sm:p-5">
       <div className="mb-4 flex items-center justify-between gap-3">
@@ -13,9 +23,15 @@ function VideoOptionCard({ onSelect, option }) {
       <div className="video-surface overflow-hidden rounded-[1.25rem] border border-slate-700/30">
         <video
           className="aspect-video w-full bg-slate-950 object-cover"
-          controls
+          autoPlay
+          loop
+          muted
           playsInline
           preload="metadata"
+          disablePictureInPicture
+          onLoadedMetadata={enforceMutedPlayback}
+          onPlay={enforceMutedPlayback}
+          onVolumeChange={enforceMutedPlayback}
         >
           <source src={option.videoSrc} type="video/mp4" />
           Your browser does not support embedded videos.

@@ -56,7 +56,11 @@ function ScenarioStage({ onSelect, scenario, scenarioIndex, totalScenarios }) {
 
       <div className="grid gap-5 lg:grid-cols-3">
         {scenario.options.map((option) => (
-          <VideoOptionCard key={option.id} onSelect={handleSelect} option={option} />
+          <VideoOptionCard
+            key={`${scenario.id}-${option.id}`}
+            onSelect={handleSelect}
+            option={option}
+          />
         ))}
       </div>
     </section>
