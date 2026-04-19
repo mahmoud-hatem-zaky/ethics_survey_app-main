@@ -1,0 +1,22 @@
+{
+  "name": "av-ethics-survey-backend",
+  "version": "1.0.0",
+  "description": "Express and MongoDB backend for the autonomous vehicle ethics survey.",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "check": "node --check src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.4.1",
+    "uuid": "^13.0.0"
+  }
+}
