@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import DemographicsForm from './components/DemographicsForm.jsx'
+import EthicsRanking from './components/EthicsRanking.jsx'
 import LandingPage from './components/LandingPage.jsx'
 import ScenarioStage from './components/ScenarioStage.jsx'
 import ThankYouPage from './components/ThankYouPage.jsx'
 import { scenarios } from './data/scenarios.js'
+import { assignFramework } from './data/ethicsAlignment.js'
 import { submitSurvey } from './services/surveyApi.js'
 
 const SURVEY_STAGES = {
   landing: 'landing',
+  ranking: 'ranking',
   scenario: 'scenario',
   demographics: 'demographics',
   thankyou: 'thankyou',
@@ -39,9 +42,16 @@ function App() {
     errorMessage: '',
   })
 
+  // New: participant's ranked concerns and the assigned framework
+  const [rankedConcernIds, setRankedConcernIds] = useState([])
+  const [assignedFramework, setAssignedFramework] = useState(null)
+
   const buildPayload = (nextDemographicData = demographicData) => ({
     session_id: sessionId,
     demographic_data: nextDemographicData,
+    // Include the ranking and assigned framework in the submission
+    ranked_concerns: rankedConcernIds,
+    assigned_framework: assignedFramework,
     responses: [...responses].sort(
       (left, right) => left.scenario_id - right.scenario_id,
     ),
@@ -53,6 +63,15 @@ function App() {
     setDemographicData({ ...INITIAL_DEMOGRAPHIC_DATA })
     setCurrentScenarioIndex(0)
     setSubmissionState({ isSubmitting: false, errorMessage: '' })
+    setRankedConcernIds([])
+    setAssignedFramework(null)
+    setStage(SURVEY_STAGES.ranking)
+  }
+
+  const handleRankingSubmit = (rankedIds) => {
+    const framework = assignFramework(rankedIds)
+    setRankedConcernIds(rankedIds)
+    setAssignedFramework(framework)
     setStage(SURVEY_STAGES.scenario)
   }
 
@@ -136,8 +155,13 @@ function App() {
           />
         ) : null}
 
+        {stage === SURVEY_STAGES.ranking ? (
+          <EthicsRanking onSubmit={handleRankingSubmit} />
+        ) : null}
+
         {stage === SURVEY_STAGES.scenario && currentScenario ? (
           <ScenarioStage
+            assignedFramework={assignedFramework}
             onSelect={handleScenarioSubmit}
             scenario={currentScenario}
             scenarioIndex={currentScenarioIndex + 1}

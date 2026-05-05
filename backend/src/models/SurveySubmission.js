@@ -1,6 +1,15 @@
 import mongoose from 'mongoose'
 
 const EXPECTED_RESPONSE_COUNT = 5
+const VALID_CONCERN_IDS = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8']
+const VALID_FRAMEWORKS = [
+  'Utilitarianism',
+  'DistributiveJustice',
+  'Deontological',
+  'Kantian',
+  'Altruism',
+  'EthicalEgoism',
+]
 
 const responseSchema = new mongoose.Schema(
   {
@@ -19,6 +28,11 @@ const responseSchema = new mongoose.Schema(
       type: Number,
       required: true,
       min: 0,
+    },
+    // Whether the participant's choice matched their assigned framework's recommendation
+    matched_framework_recommendation: {
+      type: Boolean,
+      default: null,
     },
   },
   {
@@ -62,6 +76,25 @@ const surveySubmissionSchema = new mongoose.Schema(
     demographic_data: {
       type: demographicSchema,
       required: true,
+    },
+    // The participant's ranked concern IDs, index 0 = most important
+    ranked_concerns: {
+      type: [String],
+      required: true,
+      validate: {
+        validator: (arr) =>
+          arr.length === VALID_CONCERN_IDS.length &&
+          [...arr].sort().join(',') === [...VALID_CONCERN_IDS].sort().join(','),
+        message:
+          'ranked_concerns must contain all 8 concern IDs exactly once.',
+      },
+      enum: VALID_CONCERN_IDS,
+    },
+    // The framework assigned based on the ranking
+    assigned_framework: {
+      type: String,
+      required: true,
+      enum: VALID_FRAMEWORKS,
     },
     responses: {
       type: [responseSchema],

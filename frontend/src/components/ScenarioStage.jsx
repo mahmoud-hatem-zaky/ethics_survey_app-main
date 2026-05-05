@@ -1,7 +1,14 @@
 import { useEffect, useRef } from 'react'
 import VideoOptionCard from './VideoOptionCard.jsx'
+import { getFrameworkRecommendation, FRAMEWORK_LABELS } from '../data/ethicsAlignment.js'
 
-function ScenarioStage({ onSelect, scenario, scenarioIndex, totalScenarios }) {
+function ScenarioStage({
+  assignedFramework,
+  onSelect,
+  scenario,
+  scenarioIndex,
+  totalScenarios,
+}) {
   const startedAtRef = useRef(0)
 
   useEffect(() => {
@@ -9,6 +16,11 @@ function ScenarioStage({ onSelect, scenario, scenarioIndex, totalScenarios }) {
   }, [scenario.id])
 
   const progressWidth = `${(scenarioIndex / totalScenarios) * 100}%`
+
+  // Which option letter does the assigned framework recommend for this scenario?
+  const recommendedOption = assignedFramework
+    ? getFrameworkRecommendation(assignedFramework, scenario.id)
+    : null
 
   const handleSelect = (selectedOption) => {
     const responseLatency = Math.max(
@@ -20,6 +32,8 @@ function ScenarioStage({ onSelect, scenario, scenarioIndex, totalScenarios }) {
       scenario_id: scenario.id,
       selected_option: selectedOption,
       response_latency_ms: responseLatency,
+      // Record whether the participant matched their framework's recommendation
+      matched_framework_recommendation: selectedOption === recommendedOption,
     })
   }
 
@@ -36,6 +50,25 @@ function ScenarioStage({ onSelect, scenario, scenarioIndex, totalScenarios }) {
           <p className="text-base leading-8 text-slate-600 sm:text-lg">
             {scenario.description}
           </p>
+
+          {/* Framework alignment hint — shown only when a framework is assigned */}
+          {assignedFramework && recommendedOption ? (
+            <div className="inline-flex items-center gap-2.5 rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 text-sm text-slate-600 shadow-sm">
+              <span
+                className="h-2 w-2 shrink-0 rounded-full bg-slate-400"
+                aria-hidden
+              />
+              Based on your value ranking, your ethical profile aligns with{' '}
+              <span className="font-semibold text-slate-800">
+                {FRAMEWORK_LABELS[assignedFramework]}
+              </span>
+              . This framework recommends{' '}
+              <span className="font-semibold text-slate-800">
+                Option {recommendedOption}
+              </span>{' '}
+              for this scenario.
+            </div>
+          ) : null}
         </div>
 
         <div className="w-full max-w-xs space-y-3">
@@ -58,6 +91,7 @@ function ScenarioStage({ onSelect, scenario, scenarioIndex, totalScenarios }) {
         {scenario.options.map((option) => (
           <VideoOptionCard
             key={`${scenario.id}-${option.id}`}
+            isRecommended={option.id === recommendedOption}
             onSelect={handleSelect}
             option={option}
           />

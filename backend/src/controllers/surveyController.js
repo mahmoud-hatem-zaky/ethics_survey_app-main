@@ -3,6 +3,15 @@ import SurveySubmission from '../models/SurveySubmission.js'
 
 const EXPECTED_RESPONSE_COUNT = 5
 const VALID_OPTIONS = new Set(['A', 'B', 'C'])
+const VALID_CONCERN_IDS = new Set(['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8'])
+const VALID_FRAMEWORKS = new Set([
+  'Utilitarianism',
+  'DistributiveJustice',
+  'Deontological',
+  'Kantian',
+  'Altruism',
+  'EthicalEgoism',
+])
 
 function normalizeText(value) {
   return typeof value === 'string' ? value.trim() : ''
@@ -10,6 +19,11 @@ function normalizeText(value) {
 
 function normalizePayload(body) {
   const normalizedSessionId = normalizeText(body?.session_id)
+
+  // Normalize ranked_concerns: must be an array of 8 string IDs
+  const rawRanked = Array.isArray(body?.ranked_concerns)
+    ? body.ranked_concerns.map((id) => normalizeText(id))
+    : []
 
   return {
     session_id: isUuid(normalizedSessionId) ? normalizedSessionId : uuidv4(),
@@ -20,12 +34,18 @@ function normalizePayload(body) {
         body?.demographic_data?.driving_experience,
       ),
     },
+    ranked_concerns: rawRanked,
+    assigned_framework: normalizeText(body?.assigned_framework),
     responses: Array.isArray(body?.responses)
       ? body.responses
           .map((response) => ({
             scenario_id: Number(response?.scenario_id),
             selected_option: normalizeText(response?.selected_option).toUpperCase(),
             response_latency_ms: Number(response?.response_latency_ms),
+            matched_framework_recommendation:
+              typeof response?.matched_framework_recommendation === 'boolean'
+                ? response.matched_framework_recommendation
+                : null,
           }))
           .sort((left, right) => left.scenario_id - right.scenario_id)
       : [],
@@ -38,6 +58,13 @@ function hasCompleteDemographics(demographicData) {
     demographicData.gender &&
     demographicData.driving_experience
   )
+}
+
+function isValidRankedConcerns(rankedConcerns) {
+  if (rankedConcerns.length !== VALID_CONCERN_IDS.size) return false
+  const seen = new Set(rankedConcerns)
+  return seen.size === VALID_CONCERN_IDS.size &&
+    [...seen].every((id) => VALID_CONCERN_IDS.has(id))
 }
 
 function hasInvalidResponse(responses) {
@@ -75,6 +102,19 @@ export async function submitSurvey(req, res, next) {
       })
     }
 
+    if (!isValidRankedConcerns(payload.ranked_concerns)) {
+      return res.status(400).json({
+        message:
+          'ranked_concerns must contain all 8 concern IDs (c1–c8) exactly once.',
+      })
+    }
+
+    if (!VALID_FRAMEWORKS.has(payload.assigned_framework)) {
+      return res.status(400).json({
+        message: 'assigned_framework is missing or invalid.',
+      })
+    }
+
     if (payload.responses.length !== EXPECTED_RESPONSE_COUNT) {
       return res.status(400).json({
         message: 'Exactly five scenario responses are required.',
@@ -98,6 +138,7 @@ export async function submitSurvey(req, res, next) {
     return res.status(201).json({
       message: 'Survey submitted successfully.',
       session_id: submission.session_id,
+      assigned_framework: submission.assigned_framework,
       timestamp: submission.timestamp,
     })
   } catch (error) {
