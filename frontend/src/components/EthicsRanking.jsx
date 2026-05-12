@@ -81,7 +81,7 @@ function EthicsRanking({ onSubmit }) {
   return (
     <section className="glass-panel rounded-[2rem] p-6 text-left sm:p-10">
       <div className="max-w-3xl space-y-3">
-        <p className="section-label">Step 1 of 2</p>
+        <p className="section-label">Step 2 of 3</p>
         <h1 className="study-heading text-3xl leading-tight text-slate-900 sm:text-4xl">
           What matters most to you?
         </h1>

@@ -57,6 +57,26 @@ const demographicSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    nationality: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    profession: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    driving_skill_rating: {
+      type: Number,
+      required: true,
+      min: 0,
+      max: 10,
+      validate: {
+        validator: Number.isInteger,
+        message: 'driving_skill_rating must be an integer between 0 and 10.',
+      },
+    },
   },
   {
     _id: false,

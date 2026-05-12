@@ -11,7 +11,8 @@ function LandingPage({ clipCount, onStart, scenarioCount }) {
             You will review five short driving scenarios generated in the CARLA
             simulator. Each scenario presents three possible physical outcomes.
             After watching the clips, choose the option you consider the most
-            ethical. A short demographics form follows the final scenario.
+            ethical. You will first answer a short demographics form, then rank
+            ethical considerations, and finally complete the scenarios.
           </p>
         </div>
 

@@ -13,7 +13,7 @@ This Vite + React app contains the participant-facing study interface for the th
 Create a `.env` file based on `.env.example`:
 
 ```bash
-VITE_API_BASE_URL=http://localhost:5000
+VITE_API_URL=http://localhost:5000
 ```
 
 ## Video Placeholders

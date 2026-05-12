@@ -32,6 +32,9 @@ function DemographicsForm({ errorMessage, isSubmitting, onSubmit }) {
     age: '',
     gender: '',
     driving_experience: '',
+    nationality: '',
+    profession: '',
+    driving_skill_rating: '',
   })
 
   const handleChange = (event) => {
@@ -51,13 +54,13 @@ function DemographicsForm({ errorMessage, isSubmitting, onSubmit }) {
   return (
     <section className="glass-panel rounded-[2rem] p-6 text-left sm:p-10">
       <div className="max-w-3xl space-y-4">
-        <p className="section-label">Demographics</p>
+        <p className="section-label">Step 1 of 3</p>
         <h1 className="study-heading text-3xl leading-tight text-slate-900 sm:text-4xl">
-          Final participant details
+          Participant details
         </h1>
         <p className="text-base leading-8 text-slate-600 sm:text-lg">
-          These fields help contextualize the study results. No personally
-          identifying information is requested in this starter form.
+          These fields help contextualize the study results. Please answer them
+          before continuing to the value ranking and scenario selections.
         </p>
       </div>
 
@@ -118,6 +121,54 @@ function DemographicsForm({ errorMessage, isSubmitting, onSubmit }) {
               ))}
             </select>
           </label>
+
+          <label className="space-y-2">
+            <span className="text-sm font-semibold text-slate-700">
+              Nationality
+            </span>
+            <input
+              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-700 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+              name="nationality"
+              onChange={handleChange}
+              placeholder="e.g., German"
+              required
+              type="text"
+              value={formData.nationality}
+            />
+          </label>
+
+          <label className="space-y-2">
+            <span className="text-sm font-semibold text-slate-700">
+              Profession
+            </span>
+            <input
+              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-700 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+              name="profession"
+              onChange={handleChange}
+              placeholder="e.g., Student"
+              required
+              type="text"
+              value={formData.profession}
+            />
+          </label>
+
+          <label className="space-y-2">
+            <span className="text-sm font-semibold text-slate-700">
+              Driving skill rating (0-10)
+            </span>
+            <input
+              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-700 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+              inputMode="numeric"
+              max={10}
+              min={0}
+              name="driving_skill_rating"
+              onChange={handleChange}
+              required
+              step={1}
+              type="number"
+              value={formData.driving_skill_rating}
+            />
+          </label>
         </div>
 
         {errorMessage ? (
@@ -131,7 +182,7 @@ function DemographicsForm({ errorMessage, isSubmitting, onSubmit }) {
           disabled={isSubmitting}
           type="submit"
         >
-          {isSubmitting ? 'Submitting...' : 'Submit Survey'}
+          {isSubmitting ? 'Continuing...' : 'Continue →'}
         </button>
       </form>
     </section>

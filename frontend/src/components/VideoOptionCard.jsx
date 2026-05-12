@@ -1,4 +1,4 @@
-function VideoOptionCard({ isRecommended = false, onSelect, option }) {
+function VideoOptionCard({ disabled = false, isRecommended = false, onSelect, option }) {
   console.log('Rendering VideoOptionCard with option:', option)
 
   const enforceMutedPlayback = (event) => {
@@ -58,11 +58,12 @@ function VideoOptionCard({ isRecommended = false, onSelect, option }) {
 
       <button
         className={[
-          'mt-5 rounded-full border px-5 py-3 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2',
+          'mt-5 rounded-full border px-5 py-3 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60',
           isRecommended
             ? 'border-slate-900 bg-slate-900 text-white hover:bg-slate-800 hover:border-slate-800'
             : 'border-slate-300 bg-white text-slate-700 hover:border-slate-900 hover:bg-slate-900 hover:text-white',
         ].join(' ')}
+        disabled={disabled}
         onClick={() => onSelect(option.id)}
         type="button"
       >

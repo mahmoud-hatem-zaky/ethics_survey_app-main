@@ -17,6 +17,15 @@ function normalizeText(value) {
   return typeof value === 'string' ? value.trim() : ''
 }
 
+function normalizeNumber(value) {
+  if (value === '' || value === null || typeof value === 'undefined') {
+    return null
+  }
+
+  const numericValue = Number(value)
+  return Number.isFinite(numericValue) ? numericValue : null
+}
+
 function normalizePayload(body) {
   const normalizedSessionId = normalizeText(body?.session_id)
 
@@ -32,6 +41,11 @@ function normalizePayload(body) {
       gender: normalizeText(body?.demographic_data?.gender),
       driving_experience: normalizeText(
         body?.demographic_data?.driving_experience,
+      ),
+      nationality: normalizeText(body?.demographic_data?.nationality),
+      profession: normalizeText(body?.demographic_data?.profession),
+      driving_skill_rating: normalizeNumber(
+        body?.demographic_data?.driving_skill_rating,
       ),
     },
     ranked_concerns: rawRanked,
@@ -52,12 +66,24 @@ function normalizePayload(body) {
   }
 }
 
-function hasCompleteDemographics(demographicData) {
-  return (
-    demographicData.age &&
-    demographicData.gender &&
-    demographicData.driving_experience
-  )
+function getDemographicValidationError(demographicData) {
+  if (
+    !demographicData.age ||
+    !demographicData.gender ||
+    !demographicData.driving_experience ||
+    !demographicData.nationality ||
+    !demographicData.profession
+  ) {
+    return 'Incomplete demographic data.'
+  }
+
+  const rating = demographicData.driving_skill_rating
+
+  if (!Number.isInteger(rating) || rating < 0 || rating > 10) {
+    return 'driving_skill_rating must be an integer between 0 and 10.'
+  }
+
+  return ''
 }
 
 function isValidRankedConcerns(rankedConcerns) {
@@ -96,9 +122,13 @@ export async function submitSurvey(req, res, next) {
   try {
     const payload = normalizePayload(req.body)
 
-    if (!hasCompleteDemographics(payload.demographic_data)) {
+    const demographicValidationError = getDemographicValidationError(
+      payload.demographic_data,
+    )
+
+    if (demographicValidationError) {
       return res.status(400).json({
-        message: 'Incomplete demographic data.',
+        message: demographicValidationError,
       })
     }
 

@@ -20,6 +20,9 @@ const INITIAL_DEMOGRAPHIC_DATA = {
   age: '',
   gender: '',
   driving_experience: '',
+  nationality: '',
+  profession: '',
+  driving_skill_rating: '',
 }
 
 function createSessionId() {
@@ -46,13 +49,16 @@ function App() {
   const [rankedConcernIds, setRankedConcernIds] = useState([])
   const [assignedFramework, setAssignedFramework] = useState(null)
 
-  const buildPayload = (nextDemographicData = demographicData) => ({
+  const buildPayload = ({
+    nextDemographicData = demographicData,
+    nextResponses = responses,
+  } = {}) => ({
     session_id: sessionId,
     demographic_data: nextDemographicData,
     // Include the ranking and assigned framework in the submission
     ranked_concerns: rankedConcernIds,
     assigned_framework: assignedFramework,
-    responses: [...responses].sort(
+    responses: [...nextResponses].sort(
       (left, right) => left.scenario_id - right.scenario_id,
     ),
   })
@@ -65,7 +71,7 @@ function App() {
     setSubmissionState({ isSubmitting: false, errorMessage: '' })
     setRankedConcernIds([])
     setAssignedFramework(null)
-    setStage(SURVEY_STAGES.ranking)
+    setStage(SURVEY_STAGES.demographics)
   }
 
   const handleRankingSubmit = (rankedIds) => {
@@ -75,32 +81,8 @@ function App() {
     setStage(SURVEY_STAGES.scenario)
   }
 
-  const handleScenarioSubmit = (response) => {
-    setResponses((currentResponses) => {
-      const nextResponses = [
-        ...currentResponses.filter(
-          (entry) => entry.scenario_id !== response.scenario_id,
-        ),
-        response,
-      ]
-
-      return nextResponses.sort(
-        (left, right) => left.scenario_id - right.scenario_id,
-      )
-    })
-
-    if (currentScenarioIndex >= scenarios.length - 1) {
-      setStage(SURVEY_STAGES.demographics)
-      return
-    }
-
-    setCurrentScenarioIndex((index) => index + 1)
-  }
-
-  const handleDemographicsSubmit = async (demographicData) => {
-    setDemographicData({ ...demographicData })
-
-    const payload = buildPayload(demographicData)
+  const submitFinalSurvey = async (nextResponses) => {
+    const payload = buildPayload({ nextResponses })
 
     if (payload.responses.length !== scenarios.length) {
       setSubmissionState({
@@ -108,10 +90,6 @@ function App() {
         errorMessage:
           'Please finish all five scenario selections before submitting the survey.',
       })
-      setCurrentScenarioIndex(
-        Math.min(payload.responses.length, scenarios.length - 1),
-      )
-      setStage(SURVEY_STAGES.scenario)
       return
     }
 
@@ -127,6 +105,30 @@ function App() {
         errorMessage: error.message,
       })
     }
+  }
+
+  const handleScenarioSubmit = async (response) => {
+    if (submissionState.isSubmitting) return
+
+    const nextResponses = [
+      ...responses.filter((entry) => entry.scenario_id !== response.scenario_id),
+      response,
+    ].sort((left, right) => left.scenario_id - right.scenario_id)
+
+    setResponses(nextResponses)
+
+    if (currentScenarioIndex >= scenarios.length - 1) {
+      await submitFinalSurvey(nextResponses)
+      return
+    }
+
+    setCurrentScenarioIndex((index) => index + 1)
+  }
+
+  const handleDemographicsSubmit = (nextDemographicData) => {
+    setDemographicData({ ...nextDemographicData })
+    setSubmissionState({ isSubmitting: false, errorMessage: '' })
+    setStage(SURVEY_STAGES.ranking)
   }
 
   const currentScenario = scenarios[currentScenarioIndex]
@@ -162,6 +164,8 @@ function App() {
         {stage === SURVEY_STAGES.scenario && currentScenario ? (
           <ScenarioStage
             assignedFramework={assignedFramework}
+            errorMessage={submissionState.errorMessage}
+            isSubmitting={submissionState.isSubmitting}
             onSelect={handleScenarioSubmit}
             scenario={currentScenario}
             scenarioIndex={currentScenarioIndex + 1}
@@ -171,8 +175,8 @@ function App() {
 
         {stage === SURVEY_STAGES.demographics ? (
           <DemographicsForm
-            errorMessage={submissionState.errorMessage}
-            isSubmitting={submissionState.isSubmitting}
+            errorMessage=""
+            isSubmitting={false}
             onSubmit={handleDemographicsSubmit}
           />
         ) : null}

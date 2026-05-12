@@ -4,6 +4,8 @@ import { getFrameworkRecommendation, FRAMEWORK_LABELS } from '../data/ethicsAlig
 
 function ScenarioStage({
   assignedFramework,
+  errorMessage,
+  isSubmitting,
   onSelect,
   scenario,
   scenarioIndex,
@@ -23,6 +25,8 @@ function ScenarioStage({
     : null
 
   const handleSelect = (selectedOption) => {
+    if (isSubmitting) return
+
     const responseLatency = Math.max(
       0,
       Math.round(performance.now() - startedAtRef.current),
@@ -50,6 +54,12 @@ function ScenarioStage({
           <p className="text-base leading-8 text-slate-600 sm:text-lg">
             {scenario.description}
           </p>
+
+          {errorMessage ? (
+            <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+              {errorMessage}
+            </div>
+          ) : null}
 
           {/* Framework alignment hint — shown only when a framework is assigned */}
           {assignedFramework && recommendedOption ? (
@@ -84,6 +94,10 @@ function ScenarioStage({
               style={{ width: progressWidth }}
             />
           </div>
+
+          {isSubmitting ? (
+            <p className="text-sm text-slate-500">Submitting your survey…</p>
+          ) : null}
         </div>
       </div>
 
@@ -91,6 +105,7 @@ function ScenarioStage({
         {scenario.options.map((option) => (
           <VideoOptionCard
             key={`${scenario.id}-${option.id}`}
+            disabled={isSubmitting}
             isRecommended={option.id === recommendedOption}
             onSelect={handleSelect}
             option={option}
