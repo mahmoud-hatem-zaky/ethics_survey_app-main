@@ -60,6 +60,15 @@ function normalizePayload(body) {
               typeof response?.matched_framework_recommendation === 'boolean'
                 ? response.matched_framework_recommendation
                 : null,
+            saw_other_options:
+              typeof response?.saw_other_options === 'boolean'
+                ? response.saw_other_options
+                : false,
+            changed_after_viewing:
+              typeof response?.changed_after_viewing === 'boolean'
+                ? response.changed_after_viewing
+                : false,
+            followup_reason: normalizeText(response?.followup_reason),
           }))
           .sort((left, right) => left.scenario_id - right.scenario_id)
       : [],
@@ -101,7 +110,12 @@ function hasInvalidResponse(responses) {
       response.scenario_id > EXPECTED_RESPONSE_COUNT ||
       !VALID_OPTIONS.has(response.selected_option) ||
       !Number.isFinite(response.response_latency_ms) ||
-      response.response_latency_ms < 0,
+      response.response_latency_ms < 0 ||
+      typeof response.saw_other_options !== 'boolean' ||
+      typeof response.changed_after_viewing !== 'boolean' ||
+      typeof response.followup_reason !== 'string' ||
+      // followup_reason length guard (keep conservative)
+      response.followup_reason.length > 2000,
   )
 }
 

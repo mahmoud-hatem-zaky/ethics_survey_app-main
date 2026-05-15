@@ -34,6 +34,23 @@ const responseSchema = new mongoose.Schema(
       type: Boolean,
       default: null,
     },
+      // Whether the participant viewed other available options before finalizing
+      saw_other_options: {
+        type: Boolean,
+        required: true,
+      },
+      // Whether the participant changed their selection after viewing other options
+      changed_after_viewing: {
+        type: Boolean,
+        required: true,
+      },
+      // Short free-text reason provided after viewing other options
+      followup_reason: {
+        type: String,
+        trim: true,
+        default: '',
+        maxlength: 2000,
+      },
   },
   {
     _id: false,
