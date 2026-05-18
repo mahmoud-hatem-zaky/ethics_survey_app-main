@@ -52,8 +52,8 @@ function VideoOptionCard({ disabled = false, isRecommended = false, onSelect, op
       </div>
 
       <p className="mt-4 flex-1 text-sm leading-7 text-slate-500">
-        Review this clip, compare it with the other available outcomes, then
-        make your selection below.
+        {option.description ??
+          'Review this clip, compare it with the other available outcomes, then make your selection below.'}
       </p>
 
       <button
