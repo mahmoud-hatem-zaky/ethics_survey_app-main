@@ -12,10 +12,8 @@ const ageOptions = [
 ]
 
 const genderOptions = [
-  'Woman',
-  'Man',
-  'Non-binary',
-  'Prefer to self-describe',
+  'Female',
+  'Male',
   'Prefer not to say',
 ]
 
