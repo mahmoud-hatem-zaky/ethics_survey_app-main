@@ -78,8 +78,6 @@ export const FRAMEWORK_LABELS = {
  *
  * The option letters here refer to the ACTUAL maneuver labels as they appear
  * in scenarios.js (the id field on each option object).
- *
- * Example placeholder — replace with your real simulation results:
  */
 export const ANSWER_KEY = {
   1: {

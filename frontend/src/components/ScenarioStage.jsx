@@ -31,6 +31,7 @@ function ScenarioStage({
   const [revealed, setRevealed] = useState(false)
   const [awaitingReasonFor, setAwaitingReasonFor] = useState(null)
   const [followupText, setFollowupText] = useState('')
+  const isFollowupEmpty = followupText.trim().length === 0
 
   const handleImmediateSelect = (selectedOption, sawOthers = false) => {
     if (isSubmitting) return
@@ -205,7 +206,8 @@ function ScenarioStage({
           <div className="mt-3 flex gap-2">
             <button
               type="button"
-              className="rounded-full border bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
+              className="rounded-full border bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:border-slate-400 disabled:bg-slate-400"
+              disabled={isFollowupEmpty}
               onClick={submitFollowupReason}
             >
               Submit reason

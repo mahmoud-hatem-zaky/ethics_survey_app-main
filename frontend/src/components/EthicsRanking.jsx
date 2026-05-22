@@ -1,6 +1,156 @@
 import { useState, useRef } from 'react'
 import { CONCERNS } from '../data/ethicsAlignment.js'
 
+const concernIcons = {
+  c1: (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="7" cy="7" r="2.5" />
+      <circle cx="15" cy="7" r="2.5" />
+      <path d="M3.5 17c0-2.2 2.2-4 4.5-4s4.5 1.8 4.5 4" />
+      <path d="M12 16c0-2 1.7-3.5 3.8-3.5S19.5 14 19.5 16" />
+      <path d="M15.5 18.5c-.8-.8-.6-2 0-2.6.8-.8 2-.6 2.6 0 .6-.6 1.8-.8 2.6 0 .6.6.8 1.8 0 2.6l-2.6 2.3-2.6-2.3z" />
+    </svg>
+  ),
+  c2: (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="4" y="10" width="16" height="7" rx="2" />
+      <path d="M7 10l2-3h6l2 3" />
+      <circle cx="8" cy="18" r="1.5" />
+      <circle cx="16" cy="18" r="1.5" />
+      <path d="M12 11l3 4" />
+    </svg>
+  ),
+  c3: (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="3.5" y="4" width="17" height="12.5" rx="2" />
+      <circle cx="12" cy="8" r="1.6" />
+      <path d="M12 9.6v3.2" />
+      <path d="M12 11.2l-2 1.5" />
+      <path d="M12 11.2l2 1.5" />
+      <path d="M12 12.8l-2 3" />
+      <path d="M12 12.8l2 3" />
+      <path d="M12 16.5v3" />
+    </svg>
+  ),
+  c4: (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 4v14" />
+      <path d="M6 7h12" />
+      <path d="M6 7l-3 6h6l-3-6z" />
+      <path d="M18 7l-3 6h6l-3-6z" />
+      <path d="M8 20h8" />
+    </svg>
+  ),
+  c5: (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="2.5" y="12" width="8.5" height="5.5" rx="1.5" />
+      <path d="M4.5 12l1.5-2.5h3l1.5 2.5" />
+      <circle cx="4.5" cy="18.5" r="1.4" />
+      <circle cx="8.5" cy="18.5" r="1.4" />
+      <rect x="13" y="12" width="8.5" height="5.5" rx="1.5" />
+      <path d="M15 12l1.5-2.5h3l1.5 2.5" />
+      <circle cx="15" cy="18.5" r="1.4" />
+      <circle cx="19" cy="18.5" r="1.4" />
+    </svg>
+  ),
+  c6: (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="7" cy="8" r="2" />
+      <path d="M7 10v4" />
+      <path d="M7 14l-2 4" />
+      <path d="M7 14l2 4" />
+      <path d="M16 6l4 2v4c0 3-2.5 5-4 6-1.5-1-4-3-4-6V8l4-2z" />
+    </svg>
+  ),
+  c7: (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="7" cy="8.8" r="2" />
+      <circle cx="10.5" cy="7.2" r="2" />
+      <circle cx="13.5" cy="7.2" r="2" />
+      <circle cx="17" cy="8.8" r="2" />
+      <path d="M12 12.4c-2.8 0-5 2-5 4.5s2.2 4.5 5 4.5 5-2 5-4.5-2.2-4.5-5-4.5z" />
+    </svg>
+  ),
+  c8: (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 12l8-6 8 6v7a1 1 0 0 1-1 1h-4v-5h-6v5H5a1 1 0 0 1-1-1z" />
+      <path d="M12 12l-1 3 2 2-2 3" />
+    </svg>
+  ),
+}
+
 /**
  * EthicsRanking
  * Presents the 8 Millan-Blanquel concerns as a drag-and-drop ranking list.
@@ -143,6 +293,13 @@ function EthicsRanking({ onSubmit }) {
                   <circle cx="3" cy="16" r="1.5" />
                   <circle cx="9" cy="16" r="1.5" />
                 </svg>
+              </span>
+
+              <span
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500 transition group-hover:bg-slate-200 group-hover:text-slate-700"
+                aria-hidden
+              >
+                {concernIcons[concern.id] ?? null}
               </span>
 
               {/* Text */}

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { nationalityOptions } from '../data/nationalities.js'
 
 const ageOptions = [
   '18-24',
@@ -126,15 +127,20 @@ function DemographicsForm({ errorMessage, isSubmitting, onSubmit }) {
             <span className="text-sm font-semibold text-slate-700">
               Nationality
             </span>
-            <input
+            <select
               className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-700 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
               name="nationality"
               onChange={handleChange}
-              placeholder="e.g., German"
               required
-              type="text"
               value={formData.nationality}
-            />
+            >
+              <option value="">Select a nationality</option>
+              {nationalityOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
           </label>
 
           <label className="space-y-2">
