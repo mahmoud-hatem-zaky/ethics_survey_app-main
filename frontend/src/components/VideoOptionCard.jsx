@@ -24,7 +24,7 @@ function VideoOptionCard({ disabled = false, isRecommended = false, onSelect, op
           {isRecommended ? (
             <span className="flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold tracking-[0.14em] text-emerald-700 uppercase">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
-              Your framework
+              Recommended option
             </span>
           ) : null}
           <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">

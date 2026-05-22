@@ -28,6 +28,22 @@ const drivingExperienceOptions = [
   '16+ years',
 ]
 
+const professionOptions = [
+  'Student',
+  'Technology / IT',
+  'Healthcare / Medical',
+  'Academia / Research',
+  'Education / Teaching',
+  'Engineering',
+  'Business / Finance',
+  'Government / Public sector',
+  'Arts / Media / Design',
+  'Service / Hospitality / Retail',
+  'Skilled trades / Construction',
+  'Not currently employed',
+  'Other',
+]
+
 function DemographicsForm({ errorMessage, isSubmitting, onSubmit }) {
   const [formData, setFormData] = useState({
     age: '',
@@ -147,15 +163,20 @@ function DemographicsForm({ errorMessage, isSubmitting, onSubmit }) {
             <span className="text-sm font-semibold text-slate-700">
               Profession
             </span>
-            <input
+            <select
               className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-700 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
               name="profession"
               onChange={handleChange}
-              placeholder="e.g., Student"
               required
-              type="text"
               value={formData.profession}
-            />
+            >
+              <option value="">Select a profession</option>
+              {professionOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
           </label>
 
           <label className="space-y-2">
